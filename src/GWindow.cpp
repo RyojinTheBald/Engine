@@ -1,11 +1,9 @@
+//Must be included before glfw (in GWindow.hpp)
 #include <GL/glew.h>
 
 #include "GWindow.hpp"
 
 #include <iostream>
-
-
-#include <functional>
 
 GWindow::GWindow() {
   //Initialise glfw
