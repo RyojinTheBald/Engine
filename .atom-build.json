@@ -1,5 +1,5 @@
 {
-	"cmd": "mkdir build ; cd build && cmake .. && make",
+	"cmd": "mkdir build ; cd build && cmake .. && make && ./main.o",
 	"name": "cmake",
 	"sh": true,
 	"cwd": "{PROJECT_PATH}"

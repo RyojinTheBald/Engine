@@ -88,7 +88,7 @@ void GWindow::_FramebufferSizeCallback(GLFWwindow* wnd, int x, int y) {
   //Get reference to owning GWindow instance
   GWindow* _window = (GWindow*)glfwGetWindowUserPointer(wnd);
 
-  std::cout << "Window resized to " << x << "," << y << std::endl;
+  //std::cout << "Window resized to " << x << "," << y << std::endl;
 }
 
 
@@ -96,26 +96,26 @@ void GWindow::_CursorPosCallback(GLFWwindow* wnd, double x, double y) {
   //Get reference to owning GWindow instance
   GWindow* _window = (GWindow*)glfwGetWindowUserPointer(wnd);
 
-  std::cout << "Cursor moved to " << x << "," << y << std::endl;
+  //std::cout << "Cursor moved to " << x << "," << y << std::endl;
 }
 
 void GWindow::_MouseButtonCallback(GLFWwindow* wnd, int button, int action, int mods) {
   //Get reference to owning GWindow instance
   GWindow* _window = (GWindow*)glfwGetWindowUserPointer(wnd);
 
-  std::cout << "Mouse button " << button << "," << action << "," << mods << std::endl;
+  //std::cout << "Mouse button " << button << "," << action << "," << mods << std::endl;
 }
 
 void GWindow::_KeyCallback(GLFWwindow* wnd, int key, int scancode, int action, int mods) {
   //Get reference to owning GWindow instance
   GWindow* _window = (GWindow*)glfwGetWindowUserPointer(wnd);
 
-  std::cout << "Key event " << key << "," << scancode << "," << action << "," << mods << std::endl;
+  //std::cout << "Key event " << key << "," << scancode << "," << action << "," << mods << std::endl;
 }
 
 void GWindow::_ScrollCallback(GLFWwindow* wnd, double x, double y) {
   //Get reference to owning GWindow instance
   GWindow* _window = (GWindow*)glfwGetWindowUserPointer(wnd);
 
-  std::cout << "Scroll event " << x << "," << y << std::endl;
+  //std::cout << "Scroll event " << x << "," << y << std::endl;
 }
