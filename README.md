@@ -10,3 +10,10 @@ ENTT
 
 glm, glew, glfw3
   Installed to system and available to pkg-config
+
+to build:
+  mkdir build
+  cd build
+  cmake ../.
+  make
+  ./main.o
