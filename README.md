@@ -1,5 +1,7 @@
 Dependencies:
 
+cpp-taskflow
+  Expexted at "lib/cpp-taskflow"
 
 ENTT
   Expected at "lib/entt/src"
