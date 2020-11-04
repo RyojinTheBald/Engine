@@ -21,10 +21,7 @@
 #include <entt/entt.hpp>
 #include <taskflow/taskflow.hpp>
 
-
 #include "GWindow.hpp"
-
-
 
 using namespace std::chrono_literals;
 
@@ -51,7 +48,7 @@ int main(int argc, char** argv) {
   std::cout << "Constructing task graph" << std::endl;
 
   prerender.emplace([&](){
-    //std::cout << "dt: " << dt << std::endl;
+    std::cout << "dt: " << dt << std::endl;
   }).name("Framerate Monitor");
 
   auto t_Input = prerender.emplace([&](tf::Subflow& subflow){}).name("Input subsystem");
