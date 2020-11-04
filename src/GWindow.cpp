@@ -9,7 +9,7 @@ GWindow::GWindow() {
   //Initialise glfw
   if (!glfwInit()){
     std::cerr << "Fatal Error: Unable to initialise glfw3" << std::endl;
-    exit(-1);
+    exit(EXIT_FAILURE);
   }
 
   //Create window and opengl context
@@ -18,7 +18,7 @@ GWindow::GWindow() {
   {
       glfwTerminate();
       std::cerr << "Fatal Error: Unable to create window" << std::endl;
-      exit(-1);
+      exit(EXIT_FAILURE);
   }
 
   //Activate window's context
@@ -31,7 +31,7 @@ GWindow::GWindow() {
   glewExperimental = GL_TRUE;
   if (glewInit() != GLEW_OK) {
     std::cerr << "Fatal Error: GLEW Initialisation failed" << std::endl;
-    exit(-1);
+    exit(EXIT_FAILURE);
   }
 
   //GLFW Event callbacks
@@ -55,7 +55,7 @@ GWindow::GWindow() {
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
 	// Enable depth test
-	glEnable(GL_DEPTH_TEST);
+	// glEnable(GL_DEPTH_TEST);
 
 	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
@@ -63,12 +63,12 @@ GWindow::GWindow() {
 
   //Back-face culling
 	//glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+	// glCullFace(GL_BACK);
 
 
 	glEnable(GL_LINE_SMOOTH);
-  glLineWidth(3.0f);
-	glPointSize(5);
+  // glLineWidth(3.0f);
+	// glPointSize(5);
 
 }
 
