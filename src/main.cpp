@@ -21,6 +21,11 @@
 
 #include "GWindow.hpp"
 
+
+#include <assimp/Importer.hpp>      // C++ importer interface
+#include <assimp/scene.h>           // Output data structure
+#include <assimp/postprocess.h>     // Post processing flags
+
 using namespace std::chrono_literals;
 
 entt::registry registry;
@@ -43,6 +48,7 @@ std::vector<float> triangle()
       0.0f, 0.5f, 0.0f};
 }
 
+
 int main(int argc, char **argv)
 {
   tf::Executor executor;  //Executor used for all of our taskflows
@@ -51,6 +57,28 @@ int main(int argc, char **argv)
 
   //Create window
   GWindow window;
+
+
+
+
+
+
+  Assimp::Importer importer;
+
+ const aiScene* scene = importer.ReadFile( "../../assets/cube.dae",
+    aiProcess_CalcTangentSpace       |
+    aiProcess_Triangulate            |
+    aiProcess_JoinIdenticalVertices  |
+    aiProcess_SortByPType);
+
+  // If the import failed, report it
+  if( !scene) {
+    std::cerr << "scene import failed: " << importer.GetErrorString() << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  std::cout << "Number of meshes in scene: " << scene->mNumMeshes << std::endl;
+
 
   const char *vertexShaderSource = "#version 330 core\n"
                                    "layout (location = 0) in vec3 aPos;\n"
