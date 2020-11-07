@@ -9,18 +9,15 @@ public:
     Camera(
         glm::vec3 _position = {0, 0, 0},
         glm::vec3 _direction = {0, 0, 1},
-        float _fov = 90.0f,
-        float _aspectRatio = 4.0f / 3.0f,
-        float _nearPlane = 0.1f,
-        float _farPlane = 100.0f) : position(_position),
+        float fov = 90.0f,
+        float aspectRatio = 4.0f / 3.0f,
+        float nearPlane = 0.1f,
+        float farPlane = 100.0f) : position(_position),
                                     direction(_direction)
     {
         updateView();
-        updateProjection(_fov, _aspectRatio, _nearPlane, _farPlane);
+        updateProjection(fov, aspectRatio, nearPlane, farPlane);
     };
-
-    [[nodiscard]] inline const glm::vec3 getPosition() { return position; };
-    [[nodiscard]] inline const glm::vec3 getDirection() { return direction; };
 
     inline void setPosition(glm::vec3 _position)
     {
@@ -31,6 +28,12 @@ public:
     inline void setDirection(glm::vec3 _direction)
     {
         direction = _direction;
+        updateView();
+    }
+
+    inline void lookAt(glm::vec3 lookAt)
+    {
+        direction = glm::normalize(lookAt - position);
         updateView();
     }
 
@@ -46,6 +49,8 @@ public:
         view = glm::lookAt(position, position + direction, up);
     };
 
+    [[nodiscard]] inline const glm::vec3 getPosition() { return position; };
+    [[nodiscard]] inline const glm::vec3 getDirection() { return direction; };
     [[nodiscard]] inline const glm::mat4 getView() { return view; };
     [[nodiscard]] inline const glm::mat4 getProjection() { return projection; };
 
