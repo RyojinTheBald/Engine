@@ -3,12 +3,9 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/src/**",
                 "${vcpkgRoot}/x64-windows/include",
-                "${workspaceFolder}/lib/glew-2.1.0/include",
-                "${workspaceFolder}/lib/assimp-5.0.1",
-                "${workspaceFolder}/lib/glm",
-                "${workspaceFolder}/lib/**"
+                "${workspaceFolder}/lib/**",
+                "${workspaceFolder}/include/**"
             ],
             "defines": [
                 "_DEBUG",
