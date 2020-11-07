@@ -20,6 +20,7 @@
 #include <taskflow/taskflow.hpp>
 
 #include "GWindow.hpp"
+#include "Camera.hpp"
 
 
 #include <assimp/Importer.hpp>      // C++ importer interface
@@ -58,7 +59,7 @@ int main(int argc, char **argv)
   //Create window
   GWindow window;
 
-
+  Camera cam = {};
 
 
 
@@ -66,10 +67,7 @@ int main(int argc, char **argv)
   Assimp::Importer importer;
 
  const aiScene* scene = importer.ReadFile( "../../assets/cube.dae",
-    aiProcess_CalcTangentSpace       |
-    aiProcess_Triangulate            |
-    aiProcess_JoinIdenticalVertices  |
-    aiProcess_SortByPType);
+    aiProcess_JoinIdenticalVertices);
 
   // If the import failed, report it
   if( !scene) {
@@ -78,6 +76,15 @@ int main(int argc, char **argv)
   }
 
   std::cout << "Number of meshes in scene: " << scene->mNumMeshes << std::endl;
+  std::cout << "Number of materials in scene: " << scene->mNumMaterials << std::endl;
+
+  for(unsigned int i = 0; i < scene->mNumMeshes; ++i) {
+    auto mesh = scene->mMeshes[i];
+    std::cout << "Mesh " << i << std::endl;
+    std::cout << "\tName: " << mesh->mName.data << std::endl;
+    std::cout << "\tVertices: " << mesh->mNumVertices << std::endl;
+    std::cout << "\tFaces: " << mesh->mNumFaces << std::endl;
+  }
 
 
   const char *vertexShaderSource = "#version 330 core\n"
@@ -208,12 +215,12 @@ int main(int argc, char **argv)
     executor.wait_for_all();
 
     //Dump graph after first render, to capture dynamic tasks
-    if (!dumped)
-    {
-      prerender.dump(std::cout);
-      std::cout << std::flush;
-      dumped = true;
-    }
+    // if (!dumped)
+    // {
+    //   prerender.dump(std::cout);
+    //   std::cout << std::flush;
+    //   dumped = true;
+    // }
 
     glClear(GL_COLOR_BUFFER_BIT);
 

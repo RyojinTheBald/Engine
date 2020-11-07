@@ -5,7 +5,10 @@
             "includePath": [
                 "${workspaceFolder}/src/**",
                 "${vcpkgRoot}/x64-windows/include",
-                "${workspaceFolder}/lib/glew-2.1.0/include"
+                "${workspaceFolder}/lib/glew-2.1.0/include",
+                "${workspaceFolder}/lib/assimp-5.0.1",
+                "${workspaceFolder}/lib/glm",
+                "${workspaceFolder}/lib/**"
             ],
             "defines": [
                 "_DEBUG",
@@ -16,7 +19,8 @@
             "compilerPath": "C:/Program Files/LLVM/bin/clang.exe",
             "cStandard": "c17",
             "intelliSenseMode": "clang-x64",
-            "cppStandard": "c++20"
+            "cppStandard": "c++20",
+            "configurationProvider": "ms-vscode.cmake-tools"
         }
     ],
     "version": 4

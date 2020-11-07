@@ -27,6 +27,7 @@ target_include_directories(Engine PUBLIC
     lib/glm
     lib/glfw-3.3.2.bin.WIN64/include
     lib/glew-2.1.0/include
+    include
 )
 
 target_link_libraries(Engine 
