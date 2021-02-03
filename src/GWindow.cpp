@@ -55,14 +55,14 @@ GWindow::GWindow() {
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
 	// Enable depth test
-	// glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 
 	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
 
 
   //Back-face culling
-	//glEnable(GL_CULL_FACE);
+	// glEnable(GL_CULL_FACE);
 	// glCullFace(GL_BACK);
 
 

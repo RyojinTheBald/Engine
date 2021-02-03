@@ -81,6 +81,8 @@ public:
         return programID;
     };
 
+    [[nodiscard]] inline const int getUniformLocation(const char* name) { return glGetUniformLocation(getProgram(), name); }
+
 private:
     bool valid;
     std::map<ShaderType, unsigned int> shaders;
