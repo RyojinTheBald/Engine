@@ -19,8 +19,35 @@ public:
         updateProjection(fov, aspectRatio, nearPlane, farPlane);
     };
 
+    void move(glm::vec3 direction)
+    {
+        setPosition(position + direction);
+    }
+
+    void rotate(float _pitch, float _yaw)
+    {
+        float pitch = asin(direction.y);
+        float yaw = atan2(direction.x, direction.z);
+
+        std::cout << "Old pitch/yaw: " << pitch << " " << yaw << std::endl;
+
+        pitch += _pitch;
+        yaw += _yaw;
+
+        std::cout << "New pitch/yaw: " << pitch << " " << yaw << std::endl;
+
+        glm::vec3 newDirection = {
+            cos(glm::radians(yaw)) * cos(glm::radians(pitch)),
+            sin(glm::radians(pitch)),
+            sin(glm::radians(yaw)) * cos(glm::radians(pitch))
+        };
+        setDirection(glm::normalize(newDirection));
+    }
+
     inline void setPosition(glm::vec3 _position)
     {
+        // std::cout << "Old camera position: " << position.x << "," << position.y << "," << position.z << std::endl;
+        // std::cout << "New camera position: " << _position.x << "," << _position.y << "," << _position.z << std::endl;
         position = _position;
         updateView();
     };

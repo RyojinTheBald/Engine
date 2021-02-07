@@ -10,19 +10,22 @@
 #include <random>
 #include <limits>
 
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
-#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/euler_angles.hpp>
 
 #include <entt/entt.hpp>
 #include <taskflow/taskflow.hpp>
 
+#include "Registry.hpp"
 #include "GWindow.hpp"
 #include "Camera.hpp"
 #include "Shader.hpp"
+#include "ent_camera.hpp"
 
 #include <assimp/Importer.hpp>  // C++ importer interface
 #include <assimp/scene.h>       // Output data structure
@@ -42,6 +45,84 @@ double deltaTime()
   return ret;
 }
 
+void processInput(GLFWwindow* window, entt::entity controlledEntity)
+{
+  float moveSpeed = 1.f;
+  float mouseSpeed = 0.01f;
+
+  if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    glfwSetWindowShouldClose(window, true);
+
+  if (registry.has<component::position>(controlledEntity))
+  {
+    glm::vec3 direction(0);
+
+    //keyboard movement
+    if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+      direction.z += 1;
+    if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+      direction.z -= 1;
+    if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+      direction.x += 1;
+    if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+      direction.x -= 1;
+    if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+      direction.y -= 1;
+    if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+      direction.y += 1;
+
+    if (direction.x != 0 || direction.y != 0 || direction.z != 0)
+    {
+      auto pos = registry.get<component::position>(controlledEntity);
+
+      if (registry.has<component::rotation>(controlledEntity))
+      {
+        auto rot = registry.get<component::rotation>(controlledEntity);
+        direction = direction * rot;
+      }
+      pos += direction * moveSpeed;
+      registry.replace<component::position>(controlledEntity, pos);
+    }
+  }
+
+  if (registry.has<component::rotation>(controlledEntity)) 
+    {
+    //mouselook
+    if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
+    {
+      //hide cursor, calculate cursor delta, reset cursor position
+      if(glfwGetInputMode(window, GLFW_CURSOR) != GLFW_CURSOR_DISABLED)
+      {
+        //on initial click, reset cursor position to 0,0 without firing movement callback
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetCursorPos(window, 0, 0);
+      }
+      else
+      {
+        double x, y;
+        glfwGetCursorPos(window, &x, &y);
+        glfwSetCursorPos(window, 0, 0);
+
+        auto oldRotation = registry.get<component::rotation>(controlledEntity);
+
+        glm::quat qPitch = glm::angleAxis((float)(y * mouseSpeed), glm::vec3(1, 0, 0));
+        glm::quat qYaw = glm::angleAxis((float)(x * mouseSpeed), glm::vec3(0, 1, 0));
+
+        glm::mat4 newRotation = glm::mat4_cast(glm::normalize(qPitch * qYaw) * oldRotation);
+
+        registry.replace<component::rotation>(controlledEntity, newRotation);
+      }
+
+    }
+    else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_RELEASE)
+    {
+      //unhide cursor
+      glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
+  }
+
+}
+
 int main(int argc, char **argv)
 {
   tf::Executor executor;  //Executor used for all of our taskflows
@@ -50,6 +131,9 @@ int main(int argc, char **argv)
 
   GWindow window;
   Camera cam;
+
+  auto e_cam = component::camera::create();
+
 
   Shader shader;
   shader.addFile("../../assets/shaders/vertex3Dcamera.glsl", ShaderType::SHADER_VERTEX);
@@ -64,7 +148,8 @@ int main(int argc, char **argv)
 
   Assimp::Importer importer;
 
-  const aiScene *scene = importer.ReadFile("../../assets/cube.dae", 0);
+  // const aiScene *scene = importer.ReadFile("../../assets/cube.dae", 0);
+  const aiScene *scene = importer.ReadFile("../../assets/cabin.dae", 0);
 
   // If the import failed, report it
   if (!scene)
@@ -92,7 +177,7 @@ int main(int argc, char **argv)
     //ascend from camera to root node, and accumulate transformations
     aiMatrix4x4 transform;
     while (cameraNode != rootNode) {
-      transform = cameraNode->mTransformation * transform;
+      transform = transform * cameraNode->mTransformation;
       cameraNode = cameraNode->mParent;
     }
 
@@ -106,8 +191,22 @@ int main(int argc, char **argv)
     //at present, camera is locked to horiziontal, so the stored "up" isn't used
     // auto up = rotation * sceneCamera->mUp;
 
-    cam.setPosition({position[0], position[1], position[2]});
+    cam = {
+      {position[0], position[1], position[2]}, 
+      {0,0,0},
+      glm::degrees(sceneCamera->mHorizontalFOV),
+      // 90,
+      sceneCamera->mAspect,
+      sceneCamera->mClipPlaneNear,
+      sceneCamera->mClipPlaneFar
+    };
+
     cam.lookAt({lookAt[0], lookAt[1], lookAt[2]});
+
+    std::cout << "Initial camera position: " << position[0] << "," << position[1] << "," << position[2] << std::endl;
+    std::cout << "Initial camera target: " << lookAt[0] << "," << lookAt[1] << "," << lookAt[2] << std::endl;
+    std::cout << "Initial fov (degrees): " << glm::degrees(sceneCamera->mHorizontalFOV) << std::endl;
+    std::cout << "Initial aspect ratio: " << sceneCamera->mAspect << std::endl;
   }
 
 
@@ -140,7 +239,9 @@ int main(int argc, char **argv)
            })
       .name("Framerate Monitor");
 
-  auto t_Input = prerender.emplace([&](tf::Subflow &subflow) {}).name("Input subsystem");
+  auto t_Input = prerender.emplace([&](tf::Subflow &subflow) {
+
+  }).name("Input subsystem");
   auto t_AI = prerender.emplace([&]() {}).name("AI subsystem");
 
   auto t_Network = prerender.emplace([&]() {}).name("Network subsystem");
@@ -183,14 +284,19 @@ int main(int argc, char **argv)
       dumped = true;
     }
 
+    processInput(window.getWindow(), e_cam);
+
     //execute single thread render dispatch
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
     glUseProgram(shader.getProgram());
 
     //update camera matrices
-    glUniformMatrix4fv(shader.getUniformLocation("u_projectionMat44"), 1, GL_FALSE, glm::value_ptr(cam.getProjection()));
-    glUniformMatrix4fv(shader.getUniformLocation("u_viewMat44"), 1, GL_FALSE, glm::value_ptr(cam.getView()));
+    auto projection = component::camera::getProjection(e_cam);
+    glUniformMatrix4fv(shader.getUniformLocation("u_projectionMat44"), 1, GL_FALSE, glm::value_ptr(projection));
+
+    auto view = component::camera::getView(e_cam);
+    glUniformMatrix4fv(shader.getUniformLocation("u_viewMat44"), 1, GL_FALSE, glm::value_ptr(view));
 
     glm::mat4 modelMatrix = glm::mat4(1.0);
     glUniformMatrix4fv(shader.getUniformLocation("u_modelMat44"), 1, GL_FALSE, glm::value_ptr(modelMatrix));

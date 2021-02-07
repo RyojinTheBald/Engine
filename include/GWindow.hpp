@@ -11,6 +11,8 @@ public:
   void swapBuffers() { glfwSwapBuffers(_window); }
   void getSize(int* width, int* height) { glfwGetWindowSize(_window, width, height); }
 
+  GLFWwindow* getWindow() { return _window; }
+
 protected:
   GLFWwindow* _window;
 

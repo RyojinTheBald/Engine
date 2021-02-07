@@ -110,6 +110,12 @@ void GWindow::_KeyCallback(GLFWwindow* wnd, int key, int scancode, int action, i
   //Get reference to owning GWindow instance
   GWindow* _window = (GWindow*)glfwGetWindowUserPointer(wnd);
 
+  // switch(key) {
+  //   case GLFW_KEY_ESCAPE:
+  //     glfwSetWindowShouldClose(wnd, true);
+  //     break;
+  // }
+
   //std::cout << "Key event " << key << "," << scancode << "," << action << "," << mods << std::endl;
 }
 
