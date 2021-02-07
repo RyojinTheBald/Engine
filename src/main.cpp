@@ -23,9 +23,8 @@
 
 #include "Registry.hpp"
 #include "GWindow.hpp"
-#include "Camera.hpp"
 #include "Shader.hpp"
-#include "ent_camera.hpp"
+#include "Camera.hpp"
 
 #include <assimp/Importer.hpp>  // C++ importer interface
 #include <assimp/scene.h>       // Output data structure
@@ -45,10 +44,16 @@ double deltaTime()
   return ret;
 }
 
+/**
+ * allows binding of movement and mouselook to any entity with 
+ * position and/or rotation components
+ */
 void processInput(GLFWwindow* window, entt::entity controlledEntity)
 {
   float moveSpeed = 1.f;
   float mouseSpeed = 0.01f;
+
+  float roll = 0;
 
   if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
@@ -70,6 +75,11 @@ void processInput(GLFWwindow* window, entt::entity controlledEntity)
       direction.y -= 1;
     if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
       direction.y += 1;
+    if(glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+      roll += 1;
+    if(glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+      roll -= 1;
+
 
     if (direction.x != 0 || direction.y != 0 || direction.z != 0)
     {
@@ -103,12 +113,13 @@ void processInput(GLFWwindow* window, entt::entity controlledEntity)
         glfwGetCursorPos(window, &x, &y);
         glfwSetCursorPos(window, 0, 0);
 
-        auto oldRotation = registry.get<component::rotation>(controlledEntity);
+        glm::quat oldRotation = registry.get<component::rotation>(controlledEntity);
 
         glm::quat qPitch = glm::angleAxis((float)(y * mouseSpeed), glm::vec3(1, 0, 0));
         glm::quat qYaw = glm::angleAxis((float)(x * mouseSpeed), glm::vec3(0, 1, 0));
+        glm::quat qRoll = glm::angleAxis((float)(roll * mouseSpeed), glm::vec3(0, 0, 1));
 
-        glm::mat4 newRotation = glm::mat4_cast(glm::normalize(qPitch * qYaw) * oldRotation);
+        glm::quat newRotation = glm::normalize(qPitch * qRoll * qYaw) * oldRotation;
 
         registry.replace<component::rotation>(controlledEntity, newRotation);
       }
@@ -130,10 +141,7 @@ int main(int argc, char **argv)
   double dt;              //Inter-frame deltaT
 
   GWindow window;
-  Camera cam;
-
   auto e_cam = component::camera::create();
-
 
   Shader shader;
   shader.addFile("../../assets/shaders/vertex3Dcamera.glsl", ShaderType::SHADER_VERTEX);
@@ -186,22 +194,28 @@ int main(int argc, char **argv)
     rotation.a4 = rotation.b4 = rotation.c4 = 0.f;
     rotation.d4 = 1.f;
 
-    auto position = transform * sceneCamera->mPosition;
+    auto position = (transform * sceneCamera->mPosition) * 15.0f; //scaling factor for reasons
     auto lookAt = rotation * sceneCamera->mLookAt;
     //at present, camera is locked to horiziontal, so the stored "up" isn't used
     // auto up = rotation * sceneCamera->mUp;
 
-    cam = {
-      {position[0], position[1], position[2]}, 
-      {0,0,0},
-      glm::degrees(sceneCamera->mHorizontalFOV),
-      // 90,
-      sceneCamera->mAspect,
-      sceneCamera->mClipPlaneNear,
-      sceneCamera->mClipPlaneFar
-    };
 
-    cam.lookAt({lookAt[0], lookAt[1], lookAt[2]});
+     glm::quat rot = glm::quat_cast(glm::lookAt(glm::vec3(0), glm::vec3(lookAt[0], lookAt[1],lookAt[2]), glm::vec3(0,-1,0)));
+
+    registry.replace<component::position>(e_cam, glm::vec3(position[0], position[1], position[2]));
+    registry.replace<component::rotation>(e_cam, rot);
+
+    // cam = {
+    //   {position[0], position[1], position[2]}, 
+    //   {0,0,0},
+    //   glm::degrees(sceneCamera->mHorizontalFOV),
+    //   // 90,
+    //   sceneCamera->mAspect,
+    //   sceneCamera->mClipPlaneNear,
+    //   sceneCamera->mClipPlaneFar
+    // };
+
+    // cam.lookAt({lookAt[0], lookAt[1], lookAt[2]});
 
     std::cout << "Initial camera position: " << position[0] << "," << position[1] << "," << position[2] << std::endl;
     std::cout << "Initial camera target: " << lookAt[0] << "," << lookAt[1] << "," << lookAt[2] << std::endl;
@@ -298,6 +312,8 @@ int main(int argc, char **argv)
     auto view = component::camera::getView(e_cam);
     glUniformMatrix4fv(shader.getUniformLocation("u_viewMat44"), 1, GL_FALSE, glm::value_ptr(view));
 
+
+    //TODO: get model matrices from scenegraph, also, create a scenegraph lel
     glm::mat4 modelMatrix = glm::mat4(1.0);
     glUniformMatrix4fv(shader.getUniformLocation("u_modelMat44"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
 

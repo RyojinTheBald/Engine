@@ -1,4 +1,4 @@
-#include "ent_camera.hpp"
+#include "Camera.hpp"
 
 #include "Registry.hpp"
 namespace component::camera {
