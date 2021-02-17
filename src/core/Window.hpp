@@ -11,6 +11,7 @@ namespace Core
     public:
         Window(entt::dispatcher* dispatcher);
 
+        void events() { glfwPollEvents(); }
         bool shouldClose() { return glfwWindowShouldClose(m_window); }
         void swapBuffers() { glfwSwapBuffers(m_window); }
         void getSize(int *width, int *height) { glfwGetWindowSize(m_window, width, height); }

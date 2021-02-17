@@ -1,14 +1,27 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
-#include <entt/entt.hpp>
+#include <iostream>
 
 #include "../core/Window.hpp"
+#include "../events/all.hpp"
 
 class InputSystem
 {
     public:
-        void events(Core::Window window, entt::dispatcher dispatcher) {
-            glfwPollEvents();
+        void onKey(const Events::Key key) {
+            // std::cout << "Key: " << key.keyCode << std::endl;
         }
+
+        void onMouseMove(const Events::MouseMove mouseMove) {
+
+        }
+
+        void onMouseButton(const Events::MouseButton mouseButton) {
+
+        }
+
+        void onMouseScroll(const Events::MouseScroll mouseScroll) {
+
+        }
+        
 };

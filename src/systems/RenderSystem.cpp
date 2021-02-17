@@ -33,6 +33,8 @@ void RenderSystem::render(Core::Window& window, entt::registry& registry)
         break;
     }
 
+    //TODO: what do we do if there is no camera?
+
     //get all entities with an assigned shader
     auto renderableGroup = registry.group<Component::Shader>(entt::get<Component::Mesh, Component::Position, Component::Orientation>);
 
