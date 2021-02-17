@@ -25,14 +25,23 @@
 #include "GWindow.hpp"
 #include "Shader.hpp"
 #include "Camera.hpp"
+#include "Scene.hpp"
 
 #include <assimp/Importer.hpp>  // C++ importer interface
 #include <assimp/scene.h>       // Output data structure
 #include <assimp/postprocess.h> // Post processing flags
 
+
+#include "core/Game.hpp"
+
+#include "loader/Mesh.hpp"
+#include "components/Mesh.hpp"
+
 using namespace std::chrono_literals;
 
 entt::registry registry;
+scene::Node rootNode;
+
 
 //returns dt of calls to this function
 double deltaTime()
@@ -136,9 +145,30 @@ void processInput(GLFWwindow* window, entt::entity controlledEntity)
 
 int main(int argc, char **argv)
 {
+
+  // entt::resource_cache<Component::Mesh> meshCache{};
+  // meshCache.load<Loader::Mesh>(entt::hashed_string("mesh/cabin"), "../../assets/cabin.dae");
+
+
+  // if(entt::resource_handle handle = meshCache.load<Loader::Mesh>(entt::hashed_string("mesh/cabin"), "../../assets/cabin.dae"); handle){
+  //   //ok
+  //   std::cout << "ok" << std::endl;
+
+  //   auto &mesh = handle.get();
+  //   std::cout << "num of vertices: " << mesh.m_vertices.size() << std::endl;
+  // }
+
+
+  Core::Game game;
+  return game.run();
+
+  /*
   tf::Executor executor;  //Executor used for all of our taskflows
   tf::Taskflow prerender; //Prerender task graph
   double dt;              //Inter-frame deltaT
+
+
+
 
   GWindow window;
   auto e_cam = component::camera::create();
@@ -204,18 +234,6 @@ int main(int argc, char **argv)
 
     registry.replace<component::position>(e_cam, glm::vec3(position[0], position[1], position[2]));
     registry.replace<component::rotation>(e_cam, rot);
-
-    // cam = {
-    //   {position[0], position[1], position[2]}, 
-    //   {0,0,0},
-    //   glm::degrees(sceneCamera->mHorizontalFOV),
-    //   // 90,
-    //   sceneCamera->mAspect,
-    //   sceneCamera->mClipPlaneNear,
-    //   sceneCamera->mClipPlaneFar
-    // };
-
-    // cam.lookAt({lookAt[0], lookAt[1], lookAt[2]});
 
     std::cout << "Initial camera position: " << position[0] << "," << position[1] << "," << position[2] << std::endl;
     std::cout << "Initial camera target: " << lookAt[0] << "," << lookAt[1] << "," << lookAt[2] << std::endl;
@@ -325,6 +343,6 @@ int main(int argc, char **argv)
   }
 
   glfwTerminate();
-
+  */
   return EXIT_SUCCESS;
 }

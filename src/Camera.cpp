@@ -1,6 +1,7 @@
 #include "Camera.hpp"
 
 #include "Registry.hpp"
+
 namespace component::camera {
   entt::entity create(
       glm::vec3 position, 
@@ -33,6 +34,6 @@ namespace component::camera {
   {
     auto rotation = registry.get<component::rotation>(cam);
     auto position = registry.get<component::position>(cam);
-    return  glm::toMat4(rotation) * glm::translate(glm::mat4(1), position);
+    return glm::toMat4(rotation) * glm::translate(glm::mat4(1), position);
   }
 }

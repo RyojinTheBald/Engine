@@ -17,7 +17,8 @@ set(CMAKE_PREFIX_PATH "E:/Ryojin/dev/vcpkg/installed/x64-windows")
 find_package(Threads)
 find_package(Assimp CONFIG REQUIRED)
 
-file(GLOB_RECURSE SOURCES "src/*.cpp")
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
+
 
 add_executable(Engine ${SOURCES})
 

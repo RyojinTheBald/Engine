@@ -5,6 +5,7 @@
 #include <fstream>
 #include <streambuf>
 #include <iterator>
+#include <iostream>
 #include <assert.h>
 
 #include <GL/glew.h>
@@ -18,7 +19,7 @@ enum ShaderType
 class Shader
 {
 public:
-    Shader() : valid(false){};
+    Shader() : valid(false), programID(0){};
 
     void addFile(std::string path, ShaderType Type)
     {
@@ -82,6 +83,8 @@ public:
     };
 
     [[nodiscard]] inline const int getUniformLocation(const char* name) { return glGetUniformLocation(getProgram(), name); }
+    [[nodiscard]] inline bool operator==(const Shader& rhs){ return programID == rhs.programID; }
+
 
 private:
     bool valid;
