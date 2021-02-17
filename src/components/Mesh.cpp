@@ -6,9 +6,9 @@
 
 namespace Component {
 
-    Mesh::Mesh(std::vector<glm::vec3> vertices) : m_vertices(vertices), m_numVertices(vertices.size())
+    Mesh::Mesh(std::vector<glm::vec3> vertices) : m_vertices(vertices), m_numVertices((unsigned int)vertices.size())
     {
-        const unsigned int vertexSize = 3 * sizeof(float);
+        const size_t vertexSize = 3 * sizeof(float);
 
         //generate buffers to hold vertex data
         //vertex array object

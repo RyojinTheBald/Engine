@@ -10,6 +10,7 @@ namespace Core
     {
     public:
         Window(entt::dispatcher* dispatcher);
+        ~Window();
 
         void events() { glfwPollEvents(); }
         bool shouldClose() { return glfwWindowShouldClose(m_window); }

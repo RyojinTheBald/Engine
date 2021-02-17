@@ -74,6 +74,11 @@ namespace Core
     // glPointSize(5);
   }
 
+  Window::~Window()
+  {
+    glfwTerminate();
+  }
+
   /*
   * GLFW callback functions
   */
