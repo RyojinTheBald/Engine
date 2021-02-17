@@ -1,27 +1,24 @@
 #pragma once
 
 #include <iostream>
+#include <entt/entt.hpp>
 
-#include "../core/Window.hpp"
 #include "../events/all.hpp"
+
 
 class InputSystem
 {
     public:
-        void onKey(const Events::Key key) {
-            // std::cout << "Key: " << key.keyCode << std::endl;
-        }
+        InputSystem(entt::registry* registry) : m_registry(registry) {}
 
-        void onMouseMove(const Events::MouseMove mouseMove) {
+        void onKey(const Events::Key key);
+        void onMouseMove(const Events::MouseMove mouseMove);
+        void onMouseButton(const Events::MouseButton mouseButton);
+        void onMouseScroll(const Events::MouseScroll mouseScroll);
 
-        }
+        float m_mouseSpeed = 1.f;
 
-        void onMouseButton(const Events::MouseButton mouseButton) {
-
-        }
-
-        void onMouseScroll(const Events::MouseScroll mouseScroll) {
-
-        }
+    private:
+        entt::registry* m_registry;
         
 };
