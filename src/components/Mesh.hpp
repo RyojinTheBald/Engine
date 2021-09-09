@@ -14,6 +14,11 @@ namespace Component
         void draw();
 
         std::vector<glm::vec3> m_vertices;
+        std::vector<glm::vec3> m_normals;
+        std::vector<glm::vec3> m_texcoords;
+
+        unsigned int m_numUVComponents = 0;
+        // std
 
         //Vertex Array Object
         unsigned int m_VAO;

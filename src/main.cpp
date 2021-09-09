@@ -20,14 +20,14 @@
 using namespace std::chrono_literals;
 
 //returns dt of calls to this function
-double deltaTime()
-{
-  static double lastTime = glfwGetTime();
-  double thisTime = glfwGetTime();
-  double ret = thisTime - lastTime;
-  lastTime = thisTime;
-  return ret;
-}
+// double deltaTime()
+// {
+//   static double lastTime = glfwGetTime();
+//   double thisTime = glfwGetTime();
+//   double ret = thisTime - lastTime;
+//   lastTime = thisTime;
+//   return ret;
+// }
 
 // /**
 //  * allows binding of movement and mouselook to any entity with 

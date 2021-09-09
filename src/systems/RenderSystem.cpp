@@ -9,9 +9,6 @@ void RenderSystem::render(Core::Window& window, entt::registry& registry)
     //clear buffers
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
-    //generate camera view matrix from camera entity
-    auto cameraEntityView = registry.view<Component::Camera>();
-    
     glm::mat4 cameraViewMatrix;
     glm::mat4 cameraProjectionMatrix;
 
@@ -19,7 +16,7 @@ void RenderSystem::render(Core::Window& window, entt::registry& registry)
        at this stage there will only ever be one camera within the registry, so
        just using the first one returned and aborting the loop should suffice
     */
-    for (auto& cameraEntity : cameraEntityView)
+    for (auto& cameraEntity : registry.view<Component::Camera>())
     {
         //calculate camera view matrix
         auto position = registry.get<Component::Position>(cameraEntity);

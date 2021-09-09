@@ -51,29 +51,25 @@ void InputSystem::onKey(const Events::Key key) {
 
     glm::quat orientation = glm::angleAxis((float)(roll * m_mouseSpeed), glm::vec3(0, 0, 1));
 
-    // std::cout << "direction: " << direction.x << "," << direction.y << "," << direction.z << std::endl;
-    
-    
 
-    //update player controlled entities with 
+    //update player controlled entities
     for(auto &entity : m_registry->view<Component::PlayerControl>())
     {
-        Component::PlayerControl oldControl = m_registry->get<Component::PlayerControl>(entity);
-        // auto newDirection = glm::clamp<glm::vec3>(oldControl.direction + direction, glm::vec3(-1), glm::vec3(1));
+        auto oldControl = m_registry->get<Component::PlayerControl>(entity);
 
         auto newDirection = glm::min(glm::max(oldControl.direction + direction, glm::vec3(-1)), glm::vec3(1));
 
-        std::cout << "direction: " << newDirection.x << "," << newDirection.y << "," << newDirection.z << std::endl;
         m_registry->replace<Component::PlayerControl>(entity, newDirection, orientation * oldControl.orientation);
     }
 }
 
-void InputSystem::onMouseMove(const Events::MouseMove mouseMove) {
 
+void InputSystem::onMouseMove(const Events::MouseMove mouseMove) {
+    // std::cout << "mouseMove: " << mouseMove.x << "," << mouseMove.y << std::endl;
 }
 
 void InputSystem::onMouseButton(const Events::MouseButton mouseButton) {
-
+    // std::cout << "mouseButton: " << mouseButton.button << " " << mouseButton.action << std::endl;
 }
 
 void InputSystem::onMouseScroll(const Events::MouseScroll mouseScroll) {

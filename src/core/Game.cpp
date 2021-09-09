@@ -6,6 +6,16 @@
 
 #include "../components/Shader.hpp"
 
+
+double deltaTime()
+{
+  static double lastTime = glfwGetTime();
+  double thisTime = glfwGetTime();
+  double ret = thisTime - lastTime;
+  lastTime = thisTime;
+  return ret;
+}
+
 namespace Core {
     Game::Game() : m_dispatcher(), m_window(&m_dispatcher), m_inputSystem(&m_registry)
     {
@@ -36,11 +46,10 @@ namespace Core {
         //TODO: attach control to this entity, could do with a "controlled" component, then search for and apply transforms from within input system?
 
         const auto cabin = m_registry.create();
-        m_registry.assign<Component::Position>(cabin);
+        m_registry.assign<Component::Position>(cabin, 0, 0, -1000);
         m_registry.assign<Component::Orientation>(cabin);
         m_registry.assign<Component::Shader>(cabin, shader);
 
-        meshCache.load<Loader::Mesh>(entt::hashed_string("mesh/cabin"), "../../assets/cabin.dae");
         if(entt::resource_handle handle = meshCache.load<Loader::Mesh>(entt::hashed_string("mesh/cabin"), "../../assets/cabin.dae"); handle){
             m_registry.assign<Component::Mesh>(cabin, handle);
         }
@@ -57,6 +66,7 @@ namespace Core {
         while (!m_window.shouldClose())
         {
             m_window.events();
+            update(deltaTime());
             m_renderSystem.render(m_window, m_registry);
         }
         return 0;
@@ -65,5 +75,19 @@ namespace Core {
     void Game::update(double time)
     {
 
+        const float moveSpeed = 100.f;
+        const float sensitivity = 1;
+        for(auto &entity : m_registry.view<Component::PlayerControl>())
+        {
+            auto control = m_registry.get<Component::PlayerControl>(entity);
+
+            auto position = m_registry.get<Component::Position>(entity);
+            // std::cout << "position: " << position.x << "," << position.y << "," << position.z << std::endl;
+            m_registry.replace<Component::Position>(entity, position + ((control.direction * (float)time) * moveSpeed ));
+            
+            auto orientation = m_registry.get<Component::Orientation>(entity);
+            m_registry.replace<Component::Orientation>(entity, orientation * (control.orientation * sensitivity));
+
+        }
     }
 }
