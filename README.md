@@ -1,19 +1,24 @@
-Dependencies:
+## Dependencies
+- cpp-taskflow
 
-cpp-taskflow
-  Expexted at "lib/cpp-taskflow"
+  Expected at `lib/cpp-taskflow`
 
-ENTT
-  Expected at "lib/entt/src"
+- ENTT
+
+  Expected at `lib/entt/src`
+
   To build:
-    cd lib && git clone https://github.com/skypjack/entt.git
+    `cd lib && git clone https://github.com/skypjack/entt.git`
 
-glm, glew, glfw3
-  Installed to system and available to pkg-config
+- glm, glew, glfw3
 
-to build:
+  Installed to system and available to `pkg-config`
+
+## Building
+```
   mkdir build
   cd build
   cmake ../.
   make
   ./main.o
+```
