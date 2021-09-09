@@ -16,7 +16,7 @@ class InputSystem
         void onMouseButton(const Events::MouseButton mouseButton);
         void onMouseScroll(const Events::MouseScroll mouseScroll);
 
-        float m_mouseSpeed = 1.f;
+        float m_mouseSpeed = 0.05f;
 
     private:
         entt::registry* m_registry;

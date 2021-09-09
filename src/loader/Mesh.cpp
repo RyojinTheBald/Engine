@@ -53,9 +53,22 @@ namespace Loader
                     for (unsigned int i = 0; i < textureCount; i++)
                     {
                         material->GetTexture(aiTextureType_DIFFUSE, i, &property);
-                        std::cout << "texture path: " << property.C_Str() << std::endl;
+                        const char* path = property.C_Str();
 
-                        //TODO: load associated texture here
+                        if (path[0] == '*')
+                        {   //embedded texture
+                            //skip the '*' which signifies that the texture is embedded
+                            unsigned int index = atoi(++path);
+                            std::cout << "embedded texture index: " << index << std::endl;
+
+                            //TODO: Load embedded texture
+                        }
+                        else
+                        {   //external texture
+                            std::cout << "external texture path: " << path << std::endl;
+                            
+                            //TODO: Load external texture file
+                        }
                     }
                 }
             }

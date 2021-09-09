@@ -4,6 +4,8 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#include <glm/gtx/string_cast.hpp>
+
 void RenderSystem::render(Core::Window& window, entt::registry& registry)
 {
     //clear buffers
@@ -57,7 +59,8 @@ void RenderSystem::render(Core::Window& window, entt::registry& registry)
         //calculate model matrix
         auto position = registry.get<Component::Position>(entity);
         auto orientation = registry.get<Component::Orientation>(entity);
-        glm::mat4 modelMatrix = glm::toMat4(orientation) * glm::translate(glm::mat4(1), position);
+
+        glm::mat4 modelMatrix = glm::translate(glm::mat4(1), position) * glm::toMat4(orientation);
 
         //set model matrix from entity's position and rotation
         glUniformMatrix4fv(shader.getUniformLocation("u_modelMat44"), 1, GL_FALSE, glm::value_ptr(modelMatrix));

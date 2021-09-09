@@ -7,6 +7,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
+#include <glm/gtx/string_cast.hpp>
+
+
 #include "../components/all.hpp"
 
 void InputSystem::onKey(const Events::Key key) {
@@ -51,15 +54,15 @@ void InputSystem::onKey(const Events::Key key) {
 
     glm::quat orientation = glm::angleAxis((float)(roll * m_mouseSpeed), glm::vec3(0, 0, 1));
 
-
     //update player controlled entities
     for(auto &entity : m_registry->view<Component::PlayerControl>())
     {
         auto oldControl = m_registry->get<Component::PlayerControl>(entity);
 
-        auto newDirection = glm::min(glm::max(oldControl.direction + direction, glm::vec3(-1)), glm::vec3(1));
+        glm::vec3 newDirection = glm::min(glm::max(oldControl.direction + direction, glm::vec3(-1)), glm::vec3(1));
+        glm::quat newOrientation = glm::normalize(oldControl.orientation * (orientation * m_mouseSpeed));
 
-        m_registry->replace<Component::PlayerControl>(entity, newDirection, orientation * oldControl.orientation);
+        m_registry->replace<Component::PlayerControl>(entity, newDirection, newOrientation);
     }
 }
 
